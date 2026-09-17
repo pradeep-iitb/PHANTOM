@@ -1,0 +1,189 @@
+# PHANTOM
+
+### Evidence-Driven Threat Actor Attribution
+
+PHANTOM is an **evidence-driven threat intelligence and investigation platform** that correlates fragmented digital observations across underground ecosystems to generate **explainable threat-actor attribution hypotheses**.
+
+Developed for **Smart India Hackathon 2026** under the problem statement **SIH26151 — Dark-Web Threat Actor De-anonymization**.
+
+---
+
+## Smart India Hackathon 2026
+
+- **Problem Statement:** SIH26151 — Dark-Web Threat Actor De-anonymization
+- **Theme:** Blockchain & Cybersecurity
+- **Category:** Software
+- **Team:** TEAM PHANTOM
+
+The project focuses on the challenge of correlating fragmented observations such as aliases, cryptocurrency wallets, PGP identifiers, infrastructure, behavioural patterns and temporal activity into persistent, evidence-backed attribution hypotheses.
+
+---
+
+## Status
+
+> **Early-stage Prototype / Vertical Slice**
+
+PHANTOM is currently under development and is **not a complete production system**. Also all the files will be pushed before 30 September 2026 ie the last date for idea submission .
+
+The initial implementation focuses on demonstrating the core workflow:
+
+```text
+Observations
+    ↓
+Entity Extraction & Normalization
+    ↓
+Evidence + Provenance
+    ↓
+Relationship Graph
+    ↓
+Multi-Signal Correlation
+    ↓
+Explainable Attribution Hypothesis
+    ↓
+Human Investigator Review
+```
+
+The MVP uses controlled, synthetic, or authorized data rather than claiming complete dark-web coverage.
+
+---
+
+## What PHANTOM Does
+
+PHANTOM helps investigators correlate fragmented digital traces across sources and time.
+
+Key capabilities include:
+
+- **Multi-signal correlation** across aliases, wallets, PGP, infrastructure, behaviour, stylometry and temporal activity
+- **Persistent Identity Fingerprint (PIF)** for tracking recurring characteristics across aliases, platforms and rebrands
+- **Evidence and provenance tracking** so relationships can be traced back to their underlying observations
+- **Temporal analysis** for activity continuity, reappearance and platform migration
+- **Relationship graphs** for exploring connections between entities
+- **Explainable confidence** with strong evidence, supporting signals and contradictions shown separately
+- **Human-in-the-loop review** for investigator validation and annotation
+
+---
+
+## Attribution, Not Identification
+
+PHANTOM is **not designed to automatically identify a real-world person**.
+
+Its purpose is to generate an:
+
+> **Explainable attribution hypothesis**
+
+For example:
+
+```text
+ShadowX and XShadow may be related.
+
+Strong Evidence:
+✓ Shared wallet
+✓ Reused PGP fingerprint
+
+Supporting Signals:
+✓ Alias similarity
+✓ Temporal continuity
+
+Contradictions:
+⚠ Infrastructure inconsistency
+
+Status:
+Under investigator review
+```
+
+The system presents evidence and uncertainty so that the **human investigator remains the final decision-maker**.
+
+---
+
+## Architecture
+
+```text
+                 Investigator
+                      ↓
+              Next.js Dashboard
+                      ↓
+                  FastAPI API
+                      ↓
+        ┌─────────────┴─────────────┐
+        ↓                           ↓
+   PostgreSQL                     Neo4j
+ Evidence & Metadata         Relationship Graph
+        └─────────────┬─────────────┘
+                      ↓
+             Python Attribution Engine
+                      ↓
+       Extraction • Correlation • PIF
+       Temporal • Behaviour • Stylometry
+       Crypto • Infrastructure • Scoring
+                      ↓
+          Explainable Attribution
+               Hypothesis
+```
+
+### Core Stack
+
+- **Frontend:** Next.js, TypeScript, Tailwind CSS, Cytoscape.js
+- **Backend:** Python, FastAPI
+- **Databases:** PostgreSQL + Neo4j
+- **NLP/ML:** spaCy, sentence-transformers, Hugging Face Transformers
+- **Data/Analysis:** Pandas, NumPy, scikit-learn, NetworkX
+- **Infrastructure:** Docker / Docker Compose
+- **Future collection:** Requests, BeautifulSoup, Playwright with controlled/authorized collection
+
+The detailed architecture, schemas, methodology and implementation roadmap are documented in [`idea.md`](./idea.md).
+
+---
+
+## What Makes the Approach Different
+
+PHANTOM is built around **evidence-first attribution** rather than a single prediction or indicator.
+
+Its key principles are:
+
+- **Multi-signal correlation** instead of single-indicator matching
+- **Persistent identity tracking** instead of isolated snapshots
+- **Temporal context** across platform migrations and rebrands
+- **Explainable evidence** instead of opaque attribution scores
+- **Contradiction handling** instead of ignoring conflicting evidence
+- **Human-in-the-loop investigation** instead of autonomous attribution
+
+The goal is not simply to find suspicious activity, but to help answer:
+
+> **Could these fragmented observations belong to the same persistent threat actor, and what evidence supports or contradicts that hypothesis?**
+
+---
+
+## Documentation
+
+### [`idea.md`](./idea.md)
+
+Detailed project blueprint covering:
+
+- problem definition
+- complete technical architecture
+- data model
+- attribution methodology
+- PIF
+- temporal analysis
+- NLP/ML components
+- MVP
+- development roadmap
+- security and responsible-use considerations
+
+### SIH Presentation
+
+The repository also contains the **SIH 2026 presentation** used for the project's problem framing, research context, proposed approach, feasibility and differentiation.
+
+### [`LICENSE`](./LICENSE)
+
+Contains the licensing terms for the project code. Third-party datasets, models, research and other external materials remain subject to their respective licenses and terms.
+
+---
+
+## Responsible Use
+
+PHANTOM is intended for **authorized threat-intelligence research and cybersecurity investigation**.
+
+The system generates hypotheses rather than definitive identity claims. Any real-world attribution must be independently evaluated by an appropriately authorized human investigator.
+
+---
