@@ -116,40 +116,41 @@ export default function CasesPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {cases.map((c) => (
             <a
               key={c.id}
               href={`/cases/${c.id}`}
-              className="glass glass-hover rounded-xl p-6 block animate-fade-in group"
+              className="glass glass-hover rounded-2xl p-7 block animate-fade-in group border border-[#1e2d3d]/80 hover:border-cyan-500/40 transition-all shadow-lg"
             >
               <div className="flex items-start justify-between mb-3">
-                <h3 className="text-white font-semibold group-hover:text-[#00f0ff] transition-colors">
+                <h3 className="text-white font-bold text-lg group-hover:text-[#00f0ff] transition-colors">
                   {c.title}
                 </h3>
-                <span className={`status-${c.status} text-xs px-2.5 py-0.5 rounded-full font-medium`}>
+                <span className={`status-${c.status} text-xs px-3 py-1 rounded-full font-semibold capitalize`}>
                   {c.status.replace("_", " ")}
                 </span>
               </div>
               {c.description && (
-                <p className="text-sm text-[#64748b] mb-4 line-clamp-2">{c.description}</p>
+                <p className="text-sm text-[#94a3b8] mb-5 line-clamp-2 leading-relaxed">{c.description}</p>
               )}
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#0a0e17] rounded-lg p-2.5 text-center">
-                  <div className="text-lg font-bold text-[#00f0ff]">{c.observation_count}</div>
-                  <div className="text-[10px] text-[#64748b] uppercase tracking-wider">Observations</div>
+                <div className="bg-[#070a10] rounded-xl p-3 text-center border border-[#1e2d3d]/50">
+                  <div className="text-xl font-bold text-[#00f0ff]">{c.observation_count}</div>
+                  <div className="text-[11px] text-[#64748b] uppercase tracking-wider font-semibold">Observations</div>
                 </div>
-                <div className="bg-[#0a0e17] rounded-lg p-2.5 text-center">
-                  <div className="text-lg font-bold text-[#a855f7]">{c.entity_count}</div>
-                  <div className="text-[10px] text-[#64748b] uppercase tracking-wider">Entities</div>
+                <div className="bg-[#070a10] rounded-xl p-3 text-center border border-[#1e2d3d]/50">
+                  <div className="text-xl font-bold text-[#a855f7]">{c.entity_count}</div>
+                  <div className="text-[11px] text-[#64748b] uppercase tracking-wider font-semibold">Entities</div>
                 </div>
-                <div className="bg-[#0a0e17] rounded-lg p-2.5 text-center">
-                  <div className="text-lg font-bold text-[#f59e0b]">{c.hypothesis_count}</div>
-                  <div className="text-[10px] text-[#64748b] uppercase tracking-wider">Hypotheses</div>
+                <div className="bg-[#070a10] rounded-xl p-3 text-center border border-[#1e2d3d]/50">
+                  <div className="text-xl font-bold text-[#f59e0b]">{c.hypothesis_count}</div>
+                  <div className="text-[11px] text-[#64748b] uppercase tracking-wider font-semibold">Hypotheses</div>
                 </div>
               </div>
-              <div className="mt-3 text-xs text-[#4b5563]">
-                Created {new Date(c.created_at).toLocaleDateString()}
+              <div className="mt-4 text-xs text-[#64748b] flex items-center justify-between border-t border-[#1e2d3d]/60 pt-3">
+                <span>Created {new Date(c.created_at).toLocaleDateString()}</span>
+                <span className="text-[#00f0ff] font-medium group-hover:translate-x-1 transition-transform">Inspect dossier →</span>
               </div>
             </a>
           ))}

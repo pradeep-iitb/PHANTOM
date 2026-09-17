@@ -59,7 +59,7 @@ async def _update_job(job_id: str, status: str, progress: float, result: dict = 
             await session.commit()
 
 
-async def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
+def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
     """Sync entities and relationships to Neo4j graph."""
     driver = get_neo4j_driver()
     if not driver:
@@ -77,9 +77,6 @@ async def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
                         e.normalized_value = $normalized_value,
                         e.confidence = $confidence,
                         e.case_id = $case_id
-                    WITH e
-                    CALL apoc.create.addLabels(e, [$label]) YIELD node
-                    RETURN node
                     """,
                     id=str(entity.id),
                     type=entity.entity_type,
@@ -87,7 +84,6 @@ async def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
                     normalized_value=entity.normalized_value,
                     confidence=entity.confidence,
                     case_id=case_id,
-                    label=entity.entity_type.capitalize(),
                 )
 
             # Create relationship edges
@@ -114,9 +110,9 @@ async def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
         print(f"[PHANTOM] Neo4j sync warning: {e}")
 
 
-def run_pipeline(case_id: str, job_id: str):
+async def run_pipeline(case_id: str, job_id: str):
     """Entry point for background pipeline execution."""
-    asyncio.run(_run_pipeline_async(case_id, job_id))
+    await _run_pipeline_async(case_id, job_id)
 
 
 async def _run_pipeline_async(case_id: str, job_id: str):
@@ -314,7 +310,7 @@ async def _run_pipeline_async(case_id: str, job_id: str):
 
             # ── Step 9: Sync to Neo4j ────────────────────
             all_entities_for_neo4j = [e for e, _, _ in all_extracted]
-            await _sync_to_neo4j(case_id, all_entities_for_neo4j, db_relationships)
+            _sync_to_neo4j(case_id, all_entities_for_neo4j, db_relationships)
 
             await session.commit()
 
