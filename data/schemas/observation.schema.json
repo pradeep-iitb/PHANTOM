@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PHANTOM Observation",
+  "type": "object",
+  "required": ["raw_content"],
+  "properties": {
+    "raw_content": {
+      "type": "string",
+      "description": "The raw text content of the observation"
+    },
+    "source_name": {
+      "type": "string",
+      "description": "Name of the source (forum, marketplace, etc.)"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": ["forum", "marketplace", "paste", "manual", "crawl", "intelligence", "unknown"]
+    },
+    "source_reliability": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "observed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_reference": {
+      "type": "string"
+    },
+    "handling_notes": {
+      "type": "string"
+    }
+  }
+}

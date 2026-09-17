@@ -1,0 +1,47 @@
+[
+  {
+    "raw_content": "alias: ShadowX\nsource: DarkForum Alpha\ntimestamp: 2026-01-10\n\nSelling premium access to compromised databases. Contact via PGP.\nPGP fingerprint: 8A3B 2C1D 4E5F 6A7B 8C9D 0E1F 2A3B 4C5D 6E7F 8A9B\nPayment: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\nEmail: shadowx_vendor@protonmail.com\n\nI've been active on multiple forums since 2024. Check my reputation.",
+    "source_name": "DarkForum Alpha",
+    "source_type": "forum",
+    "source_reliability": 0.7,
+    "observed_at": "2026-01-10T00:00:00Z",
+    "source_reference": "https://darkforumalpha.onion/thread/12345",
+    "handling_notes": "Synthetic test data — Case A"
+  },
+  {
+    "raw_content": "alias: XShadow\nsource: BlackMarket Beta\ntimestamp: 2026-04-15\n\nOffering same database access. Verified vendor.\nPGP fingerprint: 8A3B 2C1D 4E5F 6A7B 8C9D 0E1F 2A3B 4C5D 6E7F 8A9B\nPayment: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n\nMigrated from forums due to downtime. Same quality, same service.",
+    "source_name": "BlackMarket Beta",
+    "source_type": "marketplace",
+    "source_reliability": 0.6,
+    "observed_at": "2026-04-15T00:00:00Z",
+    "source_reference": "https://blackmarketbeta.onion/vendor/xshadow",
+    "handling_notes": "Synthetic test data — Case A (same actor as ShadowX, shared wallet + PGP)"
+  },
+  {
+    "raw_content": "alias: DarkSeller91\nsource: Underground Forum Gamma\ntimestamp: 2026-05-02\n\nNew vendor offering exploit kits.\nPayment: 0x742d35Cc6634C0532925a3b844Bc9e7595f2bD28\nEmail: darkseller91@tutanota.com\n\nNo prior reputation. First time posting here.",
+    "source_name": "Underground Forum Gamma",
+    "source_type": "forum",
+    "source_reliability": 0.5,
+    "observed_at": "2026-05-02T00:00:00Z",
+    "source_reference": "https://undergroundgamma.onion/post/98765",
+    "handling_notes": "Synthetic test data — Case B (different actor, similar timeframe)"
+  },
+  {
+    "raw_content": "alias: ShadowX_Reborn\nsource: DarkForum Alpha\ntimestamp: 2026-06-20\n\nI'm back after a break. Same services, better prices.\nPGP fingerprint: FF11 AA22 BB33 CC44 DD55 EE66 FF77 8899 AABB CCDD\nPayment: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa\n\nDon't trust imposters using my old name on other platforms.",
+    "source_name": "DarkForum Alpha",
+    "source_type": "forum",
+    "source_reliability": 0.7,
+    "observed_at": "2026-06-20T00:00:00Z",
+    "source_reference": "https://darkforumalpha.onion/thread/54321",
+    "handling_notes": "Synthetic test data — Case C (shares wallet with ShadowX but different PGP — contradiction)"
+  },
+  {
+    "raw_content": "alias: PhantomVendor\nsource: MarketPlace Delta\ntimestamp: 2026-02-28\n\nEstablished vendor since 2025. Offering premium malware kits.\nPGP fingerprint: 8A3B 2C1D 4E5F 6A7B 8C9D 0E1F 2A3B 4C5D 6E7F 8A9B\nPayment: 3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy\n\nActive on multiple markets. Trusted seller.",
+    "source_name": "MarketPlace Delta",
+    "source_type": "marketplace",
+    "source_reliability": 0.65,
+    "observed_at": "2026-02-28T00:00:00Z",
+    "source_reference": "https://marketplacedelta.onion/shop/phantomvendor",
+    "handling_notes": "Synthetic test data — Case D (shares PGP with ShadowX but different wallet — rebrand scenario)"
+  }
+]
