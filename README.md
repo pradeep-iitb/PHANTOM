@@ -18,6 +18,7 @@
 - **Theme:** Blockchain & Cybersecurity
 - **Category:** Software
 - **Team Name:** TEAM PHANTOM
+- **Dev Status:** Vertical slice in Attribution
 
 ---
 
