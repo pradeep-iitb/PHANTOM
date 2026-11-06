@@ -161,7 +161,7 @@ async def trigger_processing(
     # Create processing job
     job = ProcessingJob(case_id=case_id, job_type="full_pipeline", status="pending")
     db.add(job)
-    await db.flush()
+    await db.commit()
     await db.refresh(job)
 
     # Schedule background processing

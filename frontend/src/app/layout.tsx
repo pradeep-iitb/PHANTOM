@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PHANTOM — Evidence-Driven Threat Actor Attribution",
-  description: "An evidence-driven threat intelligence and investigation platform for correlating fragmented digital observations into explainable threat-actor attribution hypotheses.",
+  title: "PHANTOM — Threat Actor De-Anonymization Engine",
+  description: "An evidence-driven threat intelligence platform correlating fragmented dark-web observations into court-ready attribution hypotheses.",
 };
 
 export default function RootLayout({
@@ -16,53 +16,68 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body className="bg-[#0a0e17] antialiased">
-        <div className="min-h-screen bg-grid">
-          {/* Top navigation */}
-          <nav className="glass sticky top-0 z-50 border-b border-[#1e2d3d]/80 backdrop-blur-md">
-            <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-10">
-              <div className="flex items-center justify-between h-16">
-                <a href="/" className="flex items-center gap-3.5 group">
-                  <div className="relative w-9 h-9 rounded-lg overflow-hidden border border-cyan-500/30 bg-[#0d131f] flex items-center justify-center shadow-lg shadow-cyan-500/10 group-hover:border-cyan-400/60 transition-all">
-                    <img
-                      src="/logo.png"
-                      alt="PHANTOM Logo"
-                      className="w-full h-full object-contain p-0.5"
-                    />
-                  </div>
-                  <span className="text-xl font-extrabold tracking-wider text-[#e2e8f0] group-hover:text-[#00f0ff] transition-colors">
+      <body className="bg-[#04060a] text-[#f1f5f9] antialiased selection:bg-[#00f0ff]/20 selection:text-[#00f0ff]">
+        <div className="min-h-screen flex flex-col w-full relative">
+          {/* ── Glassy 90vw Floating Pill Navbar ───────────────────────── */}
+          <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-5xl transition-all">
+            <nav className="flex items-center justify-between px-5 py-2.5 rounded-full border border-white/[0.14] bg-[#070b14]/85 backdrop-blur-2xl shadow-[0_12px_40px_rgba(0,0,0,0.85)]">
+              {/* Brand (Logo + Product Name) */}
+              <a href="/" className="flex items-center gap-3 group">
+                <div className="w-8 h-8 rounded-full overflow-hidden border border-cyan-400/40 bg-black flex items-center justify-center shrink-0 group-hover:border-cyan-300 transition-colors">
+                  <img
+                    src="/logo.jpg"
+                    alt="PHANTOM Logo"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-mono text-sm font-bold tracking-wider text-white group-hover:text-cyan-300 transition-colors">
                     PHANTOM
                   </span>
-                  <span className="hidden sm:inline text-xs text-[#64748b] font-mono px-2 py-0.5 rounded bg-[#111827] border border-[#1e2d3d]">
-                    v0.1
-                  </span>
-                </a>
-                <div className="flex items-center gap-6">
-                  <a
-                    href="/cases"
-                    className="text-sm font-medium text-[#94a3b8] hover:text-[#00f0ff] transition-colors"
-                  >
-                    Cases
-                  </a>
-                  <a
-                    href="/cases/new"
-                    className="hidden sm:inline-flex px-3.5 py-1.5 bg-cyan-500/10 text-[#00f0ff] border border-cyan-500/30 hover:bg-cyan-500/20 rounded-lg text-xs font-medium transition-all"
-                  >
-                    + New Case
-                  </a>
-                  <div className="flex items-center gap-2 text-xs text-[#64748b]">
-                    <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" title="System Online" />
-                    <span className="hidden md:inline">Online</span>
-                  </div>
                 </div>
-              </div>
-            </div>
-          </nav>
+              </a>
 
-          {/* Main content */}
-          <main className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 lg:px-10 py-8">
+              {/* Navigation Links (Clean, No Nested Center Pill) */}
+              <div className="hidden md:flex items-center gap-7">
+                <a
+                  href="/"
+                  className="text-xs font-medium text-zinc-300 hover:text-white transition-colors"
+                >
+                  Overview
+                </a>
+                <a
+                  href="/cases"
+                  className="text-xs font-medium text-zinc-300 hover:text-white transition-colors"
+                >
+                  Dossiers
+                </a>
+                <a
+                  href="/#architecture"
+                  className="text-xs font-medium text-zinc-300 hover:text-white transition-colors"
+                >
+                  Subsystems
+                </a>
+              </div>
+
+              {/* Primary Action Button */}
+              <div className="flex items-center gap-3">
+                <a
+                  href="/cases#new"
+                  className="px-4 py-1.5 bg-white text-black hover:bg-zinc-200 font-mono font-semibold text-xs rounded-full transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+                >
+                  + New Case
+                </a>
+              </div>
+            </nav>
+          </header>
+
+          {/* Main Application Area */}
+          <main className="flex-1 w-full">
             {children}
           </main>
         </div>

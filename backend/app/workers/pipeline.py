@@ -15,7 +15,7 @@ import traceback
 from datetime import datetime, timezone
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 # Add engine to path
@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "en
 
 from app.db.database import async_session, get_neo4j_driver
 from app.models.models import (
-    Observation, Entity, EvidenceItem, Relationship, Hypothesis, ProcessingJob
+    Observation, Entity, EvidenceItem, Relationship, Hypothesis, ProcessingJob, AnalystReview
 )
 
 from extraction.regex_extractor import extract_entities
@@ -39,28 +39,37 @@ from attribution.hypothesis import generate_hypotheses
 
 
 async def _update_job(job_id: str, status: str, progress: float, result: dict = None, error: str = None):
-    """Update processing job status."""
-    async with async_session() as session:
-        job_result = await session.execute(
-            select(ProcessingJob).where(ProcessingJob.id == UUID(job_id))
-        )
-        job = job_result.scalar_one_or_none()
-        if job:
-            job.status = status
-            job.progress = progress
-            if result:
-                job.result = result
-            if error:
-                job.error = error
-            if status == "running" and not job.started_at:
-                job.started_at = datetime.now(timezone.utc)
-            if status in ("completed", "failed"):
-                job.completed_at = datetime.now(timezone.utc)
-            await session.commit()
+    """Update processing job status with retry logic."""
+    for attempt in range(5):
+        try:
+            async with async_session() as session:
+                job_result = await session.execute(
+                    select(ProcessingJob).where(ProcessingJob.id == UUID(job_id))
+                )
+                job = job_result.scalar_one_or_none()
+                if job:
+                    job.status = status
+                    job.progress = progress
+                    if result:
+                        job.result = result
+                    if error:
+                        job.error = error
+                    if status == "running" and not job.started_at:
+                        job.started_at = datetime.now(timezone.utc)
+                    if status in ("completed", "failed"):
+                        job.completed_at = datetime.now(timezone.utc)
+                    await session.commit()
+                    return
+                else:
+                    await asyncio.sleep(0.15)
+        except Exception as err:
+            print(f"[PHANTOM] Error updating job {job_id} (attempt {attempt+1}): {err}")
+            await asyncio.sleep(0.15)
+    print(f"[PHANTOM] Warning: job {job_id} could not be updated to {status}")
 
 
-def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
-    """Sync entities and relationships to Neo4j graph."""
+def _sync_to_neo4j_sync(case_id: str, entities_data: list, relationships_data: list):
+    """Sync entities and relationships to Neo4j graph synchronously."""
     driver = get_neo4j_driver()
     if not driver:
         return
@@ -68,7 +77,7 @@ def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
     try:
         with driver.session() as session:
             # Create entity nodes
-            for entity in entities:
+            for entity in entities_data:
                 session.run(
                     """
                     MERGE (e:Entity {id: $id})
@@ -78,16 +87,16 @@ def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
                         e.confidence = $confidence,
                         e.case_id = $case_id
                     """,
-                    id=str(entity.id),
-                    type=entity.entity_type,
-                    original_value=entity.original_value,
-                    normalized_value=entity.normalized_value,
-                    confidence=entity.confidence,
+                    id=entity["id"],
+                    type=entity["type"],
+                    original_value=entity["original_value"],
+                    normalized_value=entity["normalized_value"],
+                    confidence=entity["confidence"],
                     case_id=case_id,
                 )
 
             # Create relationship edges
-            for rel in relationships:
+            for rel in relationships_data:
                 session.run(
                     """
                     MATCH (a:Entity {id: $entity_a_id})
@@ -98,16 +107,43 @@ def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
                         r.reason = $reason,
                         r.status = $status
                     """,
-                    entity_a_id=str(rel.entity_a_id),
-                    entity_b_id=str(rel.entity_b_id),
-                    rel_id=str(rel.id),
-                    rel_type=rel.relationship_type,
-                    confidence=rel.confidence,
-                    reason=rel.reason,
-                    status=rel.status,
+                    entity_a_id=rel["entity_a_id"],
+                    entity_b_id=rel["entity_b_id"],
+                    rel_id=rel["id"],
+                    rel_type=rel["type"],
+                    confidence=rel["confidence"],
+                    reason=rel["reason"],
+                    status=rel["status"],
                 )
     except Exception as e:
         print(f"[PHANTOM] Neo4j sync warning: {e}")
+
+
+async def _sync_to_neo4j(case_id: str, entities: list, relationships: list):
+    """Sync to Neo4j in a background thread without blocking the event loop."""
+    entities_data = [
+        {
+            "id": str(e.id),
+            "type": e.entity_type,
+            "original_value": e.original_value,
+            "normalized_value": e.normalized_value,
+            "confidence": e.confidence,
+        }
+        for e in entities
+    ]
+    relationships_data = [
+        {
+            "id": str(r.id),
+            "entity_a_id": str(r.entity_a_id),
+            "entity_b_id": str(r.entity_b_id),
+            "type": r.relationship_type,
+            "confidence": r.confidence,
+            "reason": r.reason,
+            "status": r.status,
+        }
+        for r in relationships
+    ]
+    await asyncio.to_thread(_sync_to_neo4j_sync, case_id, entities_data, relationships_data)
 
 
 async def run_pipeline(case_id: str, job_id: str):
@@ -133,6 +169,37 @@ async def _run_pipeline_async(case_id: str, job_id: str):
                 return
 
             await _update_job(job_id, "running", 0.1)
+
+            # ── Clean previous pipeline artifacts for this case (idempotency) ──
+            case_uuid = UUID(case_id)
+            hyp_ids = (await session.execute(
+                select(Hypothesis.id).where(Hypothesis.case_id == case_uuid)
+            )).scalars().all()
+            if hyp_ids:
+                await session.execute(
+                    delete(AnalystReview).where(AnalystReview.hypothesis_id.in_(hyp_ids))
+                )
+            await session.execute(delete(Hypothesis).where(Hypothesis.case_id == case_uuid))
+
+            ent_ids = (await session.execute(
+                select(Entity.id).where(Entity.case_id == case_uuid)
+            )).scalars().all()
+            rel_ids = (await session.execute(
+                select(Relationship.id).where(Relationship.case_id == case_uuid)
+            )).scalars().all()
+
+            if ent_ids or rel_ids:
+                del_cond = []
+                if ent_ids:
+                    del_cond.append(EvidenceItem.entity_id.in_(ent_ids))
+                if rel_ids:
+                    del_cond.append(EvidenceItem.relationship_id.in_(rel_ids))
+                from sqlalchemy import or_
+                await session.execute(delete(EvidenceItem).where(or_(*del_cond)))
+
+            await session.execute(delete(Relationship).where(Relationship.case_id == case_uuid))
+            await session.execute(delete(Entity).where(Entity.case_id == case_uuid))
+            await session.commit()
 
             # ── Step 2: Extract entities ─────────────────
             all_extracted = []
@@ -310,7 +377,7 @@ async def _run_pipeline_async(case_id: str, job_id: str):
 
             # ── Step 9: Sync to Neo4j ────────────────────
             all_entities_for_neo4j = [e for e, _, _ in all_extracted]
-            _sync_to_neo4j(case_id, all_entities_for_neo4j, db_relationships)
+            await _sync_to_neo4j(case_id, all_entities_for_neo4j, db_relationships)
 
             await session.commit()
 

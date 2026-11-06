@@ -48,3 +48,8 @@ logs/
 htmlcov/
 .coverage
 coverage/
+
+# Antigravity & Agent Skills
+.agents/
+.taste-skill/
+
